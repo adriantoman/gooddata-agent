@@ -63,7 +63,11 @@ public class Configuration {
 
 	public static final String S3_SECRET_KEY = "s3.secretkey";
 
+	public static final String S3_REGION = "s3.region";
+
 	public static final String UPLOAD_MODE = "upload_mode";
+
+
 
 	/**
 	 * The default name of a parameter used to pass the zip file
@@ -138,8 +142,7 @@ public class Configuration {
 
 	public static final String DEFAULT_UPLOAD_MODE = "webdav";
 
-
-
+	public stacic final String DEFAULT_S3_REGION = "us-east-1";
 
 
 
@@ -224,6 +227,7 @@ public class Configuration {
 		conf.setGdcS3Path(inputConf.getProperty(S3_PATH));
 		conf.setGdcS3AccessKey(inputConf.getProperty(S3_ACCESS_KEY));
 		conf.setGdcS3SecretKey(inputConf.getProperty(S3_SECRET_KEY));
+		conf.setGdcS3Region(inputConf.getProperty(S3_REGION));
 
 		// Set upload mode
 		conf.setUploadMode(inputConf.getProperty(UPLOAD_MODE));
@@ -308,8 +312,10 @@ public class Configuration {
 	private String gdcS3Path = "";
 	private String gdcS3AccessKey = null;
 	private String gdcS3SecretKey = null;
-	private String uploadMode = null;
 
+    private String gdcS3Region = null;
+
+    private String uploadMode = null;
 	public String getGdcS3Bucket() {
 		return gdcS3Bucket;
 	}
@@ -360,9 +366,17 @@ public class Configuration {
 		this.uploadMode = (uploadMode == null) ? DEFAULT_UPLOAD_MODE : uploadMode;
 	}
 
+    public String getGdcS3Region() {
+        return gdcS3Region;
+    }
+
+    public void setGdcS3Region(String gdcS3Region) {
+        this.gdcS3Region = (gdcS3Region == null) ? DEFAULT_S3_REGION : gdcS3Region;
+    }
+
 	private Map<String,String> gdcEtlParams = null,
-	gdcEtlHiddenParams = null,
-	jdbcExtractMappings = null;
+    gdcEtlHiddenParams = null,
+    jdbcExtractMappings = null;
 
 	public Map<String, String> getGdcEtlHiddenParams() {
       return gdcEtlHiddenParams;

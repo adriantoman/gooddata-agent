@@ -135,7 +135,8 @@ public class Main {
                     conf.getGdcS3Bucket(),
                     conf.getGdcS3Path(),
                     conf.getGdcS3AccessKey(),
-                    conf.getGdcS3SecretKey()
+                    conf.getGdcS3SecretKey(),
+                    conf.getGdcS3Region()
             );
          }
          if (conf.getGdcUploadArchive() != null) {

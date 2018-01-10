@@ -40,9 +40,10 @@ public class UploaderToS3 implements UploaderInterface {
 	private final String baseUrl;
 	private final String bucket;
 
-	public UploaderToS3(final String bucket, final String baseUrl, final String access_key, final String secret_key) {
+
+	public UploaderToS3(final String bucket, final String baseUrl, final String access_key, final String secret_key, final String region) {
         BasicAWSCredentials awsCreds = new BasicAWSCredentials(access_key,secret_key);
-        this.s3client = AmazonS3ClientBuilder.standard().withRegion("us-east-1").withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+        this.s3client = AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 
 		final String slash = baseUrl.endsWith("/") ? "" : "/";
         this.baseUrl = baseUrl + slash;
@@ -79,35 +80,4 @@ public class UploaderToS3 implements UploaderInterface {
 			}
 		}
 	}
-
-//	public String uploadTemp(final File fileToUpload, final String remoteDir, final String remoteFileName) throws IOException {
-//		final String tempUrl = toTempPath(baseUrl + remoteFileName);
-//	    PutMethod method = new PutMethod(tempUrl);
-//	    RequestEntity requestEntity = new InputStreamRequestEntity(new FileInputStream(fileToUpload));
-//	    method.setRequestEntity(requestEntity);
-//	    client.getParams().setAuthenticationPreemptive(true);
-//	    client.executeMethod(method);
-//	    if (method.getStatusCode() != HttpStatus.SC_CREATED) {
-//	    	throw new RuntimeException(format("Upload failed: %s (status code = %d)",
-//	    			method.getStatusText(), method.getStatusCode()));
-//	    }
-//	    return tempUrl;
-//	}
-//
-//	private void move(final String remoteDir, final String tempUrl, String targetName) throws HttpException, IOException {
-//		final String targetUrl = baseUrl + targetName;
-//		System.out.println(tempUrl + " -> " + targetUrl);
-//		MoveMethod method = new MoveMethod(tempUrl, targetUrl, true);
-//		client.getParams().setAuthenticationPreemptive(true);
-//		client.executeMethod(method);
-//		final int sc = method.getStatusCode();
-//	    if (sc != HttpStatus.SC_CREATED && sc != HttpStatus.SC_NO_CONTENT) {
-//	    	throw new RuntimeException(format("Move failed: %s (status code = %d); file uploaded to " + tempUrl,
-//	    			method.getStatusText(), method.getStatusCode()));
-//	    }
-//	}
-//
-//	private String toTempPath(final String path) {
-//		return path + "." + System.currentTimeMillis();
-//	}
 }
