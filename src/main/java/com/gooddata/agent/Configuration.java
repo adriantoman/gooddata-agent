@@ -42,20 +42,30 @@ public class Configuration {
 
    public static final String GDC_PASSWORD = "gdc.password";
 
-   public static final String GDC_USERNAME = "gdc.username";
+	public static final String GDC_USERNAME = "gdc.username";
 
-   public static final String JDBC_DRIVER_PATH = "jdbc.driverPath";
+	public static final String JDBC_DRIVER_PATH = "jdbc.driverPath";
 
-   // for a backward compatibility
-   public static final String JDBC_DRIVER_PATH_BC = "jdbc.driver_path";
+	// for a backward compatibility
+	public static final String JDBC_DRIVER_PATH_BC = "jdbc.driver_path";
 
-   public static final String JDBC_DRIVER = "jdbc.driver";
+	public static final String JDBC_DRIVER = "jdbc.driver";
 
-   public static final String JDBC_URL = "jdbc.url";
+	public static final String JDBC_URL = "jdbc.url";
 
-   public static final String JDBC_USERNAME = "jdbc.username";
+	public static final String JDBC_USERNAME = "jdbc.username";
 
-   /**
+	public static final String S3_BUCKET = "s3.bucket";
+
+	public static final String S3_PATH = "s3.path";
+
+	public static final String S3_ACCESS_KEY = "s3.accesskey";
+
+	public static final String S3_SECRET_KEY = "s3.secretkey";
+
+	public static final String UPLOAD_MODE = "upload_mode";
+
+	/**
 	 * The default name of a parameter used to pass the zip file
 	 * with data to be processed.
 	 */
@@ -66,7 +76,7 @@ public class Configuration {
 	 * that contains the list of files to be processed.
 	 */
 	public static final String DEFAULT_PARAM_MANIFEST = "gdc_agent_manifest";
-	
+
 	/**
 	 * The default name of a parameter used to pass the timestamp
 	 * formatted as yyyyMMddHHmmss.
@@ -87,7 +97,7 @@ public class Configuration {
     */
 	public static final String DEFAULT_PARAM_GDC_PASSWORD = "gdc_password";
 
-   /**
+	/**
     * The default name of a parameter used to pass the password of a user
     * who started the ETL process. This information is not sent if the
     * gdc.etl.send_credentials property is set to false.
@@ -116,7 +126,7 @@ public class Configuration {
     */
    public static final String DEFAULT_PARAM_MANIFEST_URL_NO_CREDENTIALS = "gdc_agent_manifest_url_nocreds";
 
-	
+
 	/**
 	 * The default name of a parameter used to pass a remote directory where
 	 * the ETL is expected to put any information about results of the data
@@ -125,6 +135,16 @@ public class Configuration {
 	 * reports.
 	 */
 	public static final String DEFAULT_PARAM_REPORTS = "gdc_agent_reports";
+
+	public static final String DEFAULT_UPLOAD_MODE = "webdav";
+
+
+
+
+
+
+
+
 
 	private Map<String,Exception> errors = new HashMap<String, Exception>();
 	private Map<String,String[]> ALL_OR_NONE = new HashMap<String, String[]>(){{
@@ -198,6 +218,16 @@ public class Configuration {
 		conf.setJdbcPassword(inputConf.getProperty(JDBC_PASSWORD));
 		conf.setJdbcUrl(inputConf.getProperty(JDBC_URL));
 
+
+		// S3 related parameters
+		conf.setGdcS3Bucket(inputConf.getProperty(S3_BUCKET));
+		conf.setGdcS3Path(inputConf.getProperty(S3_PATH));
+		conf.setGdcS3AccessKey(inputConf.getProperty(S3_ACCESS_KEY));
+		conf.setGdcS3SecretKey(inputConf.getProperty(S3_SECRET_KEY));
+
+		// Set upload mode
+		conf.setUploadMode(inputConf.getProperty(UPLOAD_MODE));
+
 		// JDBC data sets
 		conf.jdbcExtractMappings = buildJdbcExtractMappings(inputConf, "data.", ".sql");
 		conf.validate(inputConf);
@@ -245,35 +275,73 @@ public class Configuration {
 	}
 
 	// GoodData properties
-	private String gdcUsername = null,
-				   gdcPassword = null,
-				   gdcUploadUrl = null,
-				   gdcUploadHost = null,
-				   gdcUploadProtocol = null,
-				   gdcUploadPath = null,
-				   gdcApiHost = null,
-				   gdcApiProtocol = null,
-				   gdcEtlProcessPath = null,
-				   gdcEtlProcessUrl = null,
-				   gdcEtlGraph = null,
-				   gdcEtlParamNameZip = null,
-				   gdcEtlParamNameManifest = null,
-				   gdcEtlParamNameNow = null,
-				   gdcEtlParamNameReports = null,
-				   gdcEtlParamNameGdcUsername = null,
-				   gdcEtlParamNameGdcPassword = null,
-				   gdcEtlParamNameZipUrl = null,
-				   gdcEtlParamNameZipUrlNoCreds = null,
-				   gdcEtlParamNameManifestUrl = null,
-				   gdcEtlParamNameManifestUrlNoCreds = null,
-				   gdcUploadArchive = null,
-				   gdcUploadManifest = null,
-				   gdcEtlSendCredentials = null,
-				   jdbcDriverPath = null,
-				   jdbcDriver = null,
-				   jdbcUsername = null,
-				   jdbcPassword = null,
-				   jdbcUrl;
+	private String gdcUsername = null;
+	private String gdcPassword = null;
+	private String gdcUploadUrl = null;
+	private String gdcUploadHost = null;
+	private String gdcUploadProtocol = null;
+	private String gdcUploadPath = null;
+	private String gdcApiHost = null;
+	private String gdcApiProtocol = null;
+	private String gdcEtlProcessPath = null;
+	private String gdcEtlProcessUrl = null;
+	private String gdcEtlGraph = null;
+	private String gdcEtlParamNameZip = null;
+	private String gdcEtlParamNameManifest = null;
+	private String gdcEtlParamNameNow = null;
+	private String gdcEtlParamNameReports = null;
+	private String gdcEtlParamNameGdcUsername = null;
+	private String gdcEtlParamNameGdcPassword = null;
+	private String gdcEtlParamNameZipUrl = null;
+	private String gdcEtlParamNameZipUrlNoCreds = null;
+	private String gdcEtlParamNameManifestUrl = null;
+	private String gdcEtlParamNameManifestUrlNoCreds = null;
+	private String gdcUploadArchive = null;
+	private String gdcUploadManifest = null;
+	private String gdcEtlSendCredentials = null;
+	private String jdbcDriverPath = null;
+	private String jdbcDriver = null;
+	private String jdbcUsername = null;
+	private String jdbcPassword = null;
+	private String jdbcUrl;
+	private String gdcS3Bucket = null;
+	private String gdcS3Path = "";
+	private String gdcS3AccessKey = null;
+	private String gdcS3SecretKey = null;
+	private String uploadMode = null;
+
+	public String getGdcS3Bucket() {
+		return gdcS3Bucket;
+	}
+
+	public void setGdcS3Bucket(String gdcS3Bucket) {
+		this.gdcS3Bucket = gdcS3Bucket;
+	}
+
+	public String getGdcS3Path() {
+		return gdcS3Path;
+	}
+
+	public void setGdcS3Path(String gdcS3Path) {
+		this.gdcS3Path = gdcS3Path;
+	}
+
+	public String getGdcS3AccessKey() {
+		return gdcS3AccessKey;
+	}
+
+	public void setGdcS3AccessKey(String gdcS3AccessKey) {
+		this.gdcS3AccessKey = gdcS3AccessKey;
+	}
+
+	public String getGdcS3SecretKey() {
+		return gdcS3SecretKey;
+	}
+
+	public void setGdcS3SecretKey(String gdcS3SecretKey) {
+		this.gdcS3SecretKey = gdcS3SecretKey;
+	}
+
 	private boolean sendCredentials = false;
 
 	public String getGdcUploadManifest() {
@@ -284,9 +352,17 @@ public class Configuration {
 		this.gdcUploadManifest = gdcUploadManifest;
 	}
 
+	public String getUploadMode() {
+		return uploadMode;
+	}
+
+	public void setUploadMode(String uploadMode) {
+		this.uploadMode = (uploadMode == null) ? DEFAULT_UPLOAD_MODE : uploadMode;
+	}
+
 	private Map<String,String> gdcEtlParams = null,
-	                         gdcEtlHiddenParams = null,
-			                   jdbcExtractMappings = null;
+	gdcEtlHiddenParams = null,
+	jdbcExtractMappings = null;
 
 	public Map<String, String> getGdcEtlHiddenParams() {
       return gdcEtlHiddenParams;
@@ -298,7 +374,7 @@ public class Configuration {
 
    // Source files
 	private String fsInputDir = null,
-				   fsWildcard = null;
+	fsWildcard = null;
 
 	public String getFsWildcard() {
 		return fsWildcard;
@@ -575,6 +651,16 @@ public class Configuration {
       this.sendCredentials = sendCredentials;
    }
 
+   public boolean s3ParametersPresent(){
+	   if (gdcS3Bucket != null && gdcS3AccessKey != null && gdcS3SecretKey != null) {
+	   	return true;
+	   }
+	   else
+	   {
+	   	return false;
+	   }
+   }
+
    public static class InputConfiguration {
 	   Properties props;
 	   Properties defaults;
@@ -602,4 +688,7 @@ public class Configuration {
 	      return result;
 	   }
 	}
+
+
+
 }

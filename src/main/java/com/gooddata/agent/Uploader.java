@@ -41,7 +41,7 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.jackrabbit.webdav.client.methods.MoveMethod;
 import org.apache.jackrabbit.webdav.client.methods.PutMethod;
 
-public class Uploader {
+public class Uploader implements UploaderInterface {
 	private final HttpClient client;
 	private final String baseUrl;
 

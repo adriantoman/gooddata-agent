@@ -120,14 +120,31 @@ public class Main {
    private void run() {
       Date now = new Date();
       Collector collector = null;
-      if (conf.getGdcUploadUrl() == null) {
+      UploaderInterface u = null;
+      if (conf.getGdcUploadUrl() == null && conf.getUploadMode().equals("webdav")) {
          ok("Upload URL is not set up, skipping");
+      }
+      else if (!conf.s3ParametersPresent() && conf.getUploadMode().equals("s3")) {
+         ok("Mode set to S3, but S3 parameters are not present");
       } else {
-         Uploader u = new Uploader(conf.getGdcUploadUrl(),
-               conf.getGdcUsername(), conf.getGdcPassword());
-         collector = (conf.getGdcUploadArchive() != null) ? new ArchiveCollector(
-               conf.getGdcUploadArchive(), now) : new ManifestCollector(
-               conf.getGdcUploadManifest(), now);
+         if (conf.getUploadMode().equals("webdav")){
+            u = new Uploader(conf.getGdcUploadUrl(),conf.getGdcUsername(), conf.getGdcPassword());
+         }
+         else if (conf.getUploadMode().equals("s3")){
+            u = new UploaderToS3(
+                    conf.getGdcS3Bucket(),
+                    conf.getGdcS3Path(),
+                    conf.getGdcS3AccessKey(),
+                    conf.getGdcS3SecretKey()
+            );
+         }
+         if (conf.getGdcUploadArchive() != null) {
+            collector = new ArchiveCollector(conf.getGdcUploadArchive(), now);
+         }
+         else {
+            // In case that we are using S3 mode, we don't want to have timestemp + csv at the end of the file.
+            collector = new ManifestCollector(conf.getGdcUploadManifest(), now, conf.s3ParametersPresent());
+         }
          jdbcExtract(collector);
          fsExtract(collector);
 
