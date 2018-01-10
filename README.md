@@ -94,6 +94,18 @@ CloudConnect graph or into the workspace.prm CloudConnect configuration file.
     # Target
     gdc.upload_url=https://secure-di.gooddata.com/project-uploads/fqp21nrdqm666u5nwgl0upsgee4a4xv2/
     gdc.upload_archive=data-${yyyyMMddHHmmss}.zip
+
+
+    # S3 related options
+    # Which mode to use for upload
+    #upload_mode=s3
+
+    #s3.bucket=bucket_name
+    #s3.path=path_where/you/want_to/upload
+    #s3.accesskey=access_key
+    #s3.secretkey=secret_key
+    #s3.region=region of S3 bucket (optional)
+
     #
     # Alternatively, you can upload uncompressed files individually and
     # reference them by a manifest file; the manifest is a text file including
